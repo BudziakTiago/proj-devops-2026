@@ -16,5 +16,5 @@ jobs:
         with:
           name: zipped_project.zip
           path: |
-            '**.py'
+            main.py
             README.md
