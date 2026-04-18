@@ -1,3 +1,5 @@
+import json
+
 def menu():
     print('\n------Menu------')
     print('1. Estudantes')
@@ -23,131 +25,147 @@ menu_opcoes = ['',
 '---- Menu de Operações - Turmas -----', 
 '-- Menu de Operações - Matrículas ---']
 
-menu_op_opcoes = ['', 
-'--- Opcão - Inclusão ----', 
-'--- Opcão - Listagem ----', 
-'-- Opcão - Atualização -', 
-'--- Opcão - Exclusão ---']
-
 alunos = []
 
-def incluir(id, name, cpf):
-    aluno = {'id':id, 'name':name, 'cpf':cpf}
-    alunos.append(aluno)
+def incluir():
+    dados = recuperar_arquivo()
+
+    id = int(input("Digite o ID do aluno: "))
+    nome = input("Digite o nome do aluno: ")
+    cpf = input("Digite o CPF do aluno: ")
+
+    aluno = {'id':id, 'nome':nome, 'cpf':cpf}
+    
+    if dados:
+        dados.append(aluno)
+
+        with open("aluno.json", "w", encoding="utf-8") as arquivo:
+            json.dump(dados, arquivo, ensure_ascii=False)
+    else:
+        alunos.append(aluno)
+
+        with open("aluno.json", "w", encoding="utf-8") as arquivo:
+            json.dump(alunos, arquivo, ensure_ascii=False)
 
 def listar():
-    if alunos:
-        for i in range(len(alunos)):
-            print(f"- {alunos[i]}")
+    dados = recuperar_arquivo()
+
+    if dados:
+        for i in range(len(dados)):
+            print(f"- {dados[i]}")
     else:
-        print("Nenhum aluno cadastrado")
+        print("Nenhum aluno cadastrado")        
 
-def editar(i, id, name, cpf):
-    alunos[i]['id'] = id
-    alunos[i]['name'] = name
-    alunos[i]['cpf'] = cpf
-    print("Aluno editado com sucesso!")
+def editar():
+    editado = False
+    dados = recuperar_arquivo()
+                
+    if dados:
+        codigo = int(input("Digite o ID do aluno a ser editado: "))
 
-def excluir(i):
-    print(f"Aluno {alunos[i]} excluído com sucesso!")
-    alunos.pop(i)
+        for i in range(len(dados)):
+            if dados[i]['id'] == codigo: 
+
+                dados[i]['id'] = int(input("Digite o novo ID do aluno: "))
+                dados[i]['nome'] = input("Digite o novo nome do aluno: ")
+                dados[i]['cpf'] = input("Digite o novo CPF do aluno: ")
+
+                with open("aluno.json", "w", encoding="utf-8") as arquivo:
+                    json.dump(dados, arquivo, ensure_ascii=False)
+
+                print("Aluno editado com sucesso!")
+                editado = True
+
+        if editado != True: 
+            print("Nenhum aluno cadastrado com este ID")
+    else:
+        print("\nNenhum aluno cadastrado")
+
+def excluir():
+    excluido = False
+    dados = recuperar_arquivo()
+
+    if dados:
+        codigo = int(input("Digite o ID do aluno a ser excluído: "))
+
+        for i in range(len(dados)): 
+            if dados[i]['id'] == codigo:
+                print(f"Aluno {dados[i]} excluído com sucesso!")
+                dados.pop(i)
+
+                with open("aluno.json", "w", encoding="utf-8") as arquivo:
+                    json.dump(dados, arquivo, ensure_ascii=False)
+
+                break
+
+        if excluido != True:
+            print("\nNenhum aluno cadastrado com o ID indicado")
+    else:
+        print("\nNenhum aluno cadastrado")
+
+def recuperar_arquivo():
+    try:
+        with open("aluno.json", "r", encoding="utf-8") as arquivo:
+            dados = json.load(arquivo)
+        return dados
+    except:
+        dados = []
+        return dados  
 
 while True: 
     menu() # Mostra o menu
 
     try: 
         opcao = int(input("Digite a opção desejada: "))
-
-        if opcao < 1 or opcao > 6:
-            print("\nOpção Inválida")
-
-        elif opcao == 6:
-            print("Saindo...\n")
-            break
-
-        elif opcao == 2 or opcao == 3 or opcao == 4 or opcao == 5:
-            print(menu_opcoes[opcao])
-            print("--------- EM DESENVOLVIMENTO --------")
-            print("-------------------------------------")
-
-        elif opcao == 1:
-
-            while True:
-                print(f"\n{menu_opcoes[opcao]}")
-                menu_op() # Mostra o menu de operações
-
-                try: 
-                    opcao_op = int(input("Digite a opção desejada: "))
-
-                    if opcao_op < 1 or opcao_op > 5:
-                        print("\nOpção Inválida")
-
-                    elif opcao_op == 5:
-                        break
-
-                    elif opcao_op == 1: # Inclusão
-                        print(f"\n{menu_op_opcoes[opcao_op]}")
-                        
-                        id = int(input("Digite o ID do aluno: "))
-                        name = input("Digite o nome do aluno: ")
-                        cpf = input("Digite o CPF do aluno: ")
-
-                        incluir(id, name, cpf)
-
-                        input("Aperte ENTER para continuar")
-
-                    elif opcao_op == 2: # Listagem
-                        print(f"\n{menu_op_opcoes[opcao_op]}")
-
-                        listar()
-
-                        input("Aperte ENTER para continuar")
-
-                    elif opcao_op == 3: # Edição
-                        editado = False
-
-                        print(f"\n{menu_op_opcoes[opcao_op]}")
-
-                        codigo = int(input("Digite o ID do aluno a ser editado: "))
-
-                        for i in range(len(alunos)):
-                            if alunos[i]['id'] == codigo: 
-
-                                new_id = int(input("Digite o novo ID do aluno: "))
-                                new_name = input("Digite o novo nome do aluno: ")
-                                new_cpf = input("Digite o novo CPF do aluno: ")
-
-                                editar(i, new_id, new_name, new_cpf)
-                                
-                                editado = True
-
-                        if editado != True: 
-                            print("Nenhum aluno cadastrado com este ID")
-
-                        input("Aperte ENTER para continuar")
-
-                    elif opcao_op == 4: # Exclusão
-                        excluido = False
-
-                        if alunos:
-                            print(f"\n{menu_op_opcoes[opcao_op]}")
-
-                            codigo = int(input("Digite o ID do aluno a ser excluído: "))
-                            
-                            for i in range(len(alunos)):
-                                if alunos[i]['id'] == codigo: 
-                                    excluir(i)
-                                    excluido = True
-
-                            if excluido != True: 
-                                print("Nenhum aluno cadastrado com este ID")
-                                    
-                            input("Aperte ENTER para continuar")
-                        else:
-                            print("\nNenhum aluno cadastrado")
-
-                except:
-                    print("\nOpção Inválida")
-
     except:
         print("\nOpção Inválida")
+        continue
+
+    if opcao < 1 or opcao > 6:
+        print("\nOpção Inválida")
+
+    elif opcao == 6:
+        print("Saindo...\n")
+        break
+
+    elif opcao == 2 or opcao == 3 or opcao == 4 or opcao == 5:
+        print(menu_opcoes[opcao])
+        print("--------- EM DESENVOLVIMENTO --------")
+        print("-------------------------------------")
+
+    elif opcao == 1:
+        while True:
+            print(f"\n{menu_opcoes[opcao]}")
+            menu_op() # Mostra o menu de operações
+
+            try: 
+                opcao_op = int(input("Digite a opção desejada: "))
+            except:
+                print("\nOpção Inválida")
+                continue
+
+            if opcao_op < 1 or opcao_op > 5:
+                print("\nOpção Inválida")
+
+            elif opcao_op == 1: # Inclusão     
+                print("\n--- Opcão - Inclusão ----")    
+                incluir()
+                input("Aperte ENTER para continuar")
+
+            elif opcao_op == 2: # Listagem
+                print("\n--- Opcão - Listagem ----")  
+                listar()
+                input("Aperte ENTER para continuar")
+
+            elif opcao_op == 3: # Edição
+                print("\n-- Opcão - Atualização -")  
+                editar()
+                input("Aperte ENTER para continuar")                                
+
+            elif opcao_op == 4: # Exclusão
+                print("\n--- Opcão - Exclusão ---")  
+                excluir()
+                input("Aperte ENTER para continuar")
+
+            elif opcao_op == 5:
+                break
