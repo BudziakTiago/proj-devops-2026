@@ -31,8 +31,8 @@ menu_op_opcoes = ['',
 
 alunos = []
 
-def incluir(id, nome, cpf):
-    aluno = {'id':id, 'nome':nome, 'cpf':cpf}
+def incluir(id, name, cpf):
+    aluno = {'id':id, 'name':name, 'cpf':cpf}
     alunos.append(aluno)
 
 def listar():
@@ -42,9 +42,9 @@ def listar():
     else:
         print("Nenhum aluno cadastrado")
 
-def editar(i, id, nome, cpf):
+def editar(i, id, name, cpf):
     alunos[i]['id'] = id
-    alunos[i]['nome'] = nome
+    alunos[i]['name'] = name
     alunos[i]['cpf'] = cpf
     print("Aluno editado com sucesso!")
 
@@ -89,10 +89,10 @@ while True:
                         print(f"\n{menu_op_opcoes[opcao_op]}")
                         
                         id = int(input("Digite o ID do aluno: "))
-                        nome = input("Digite o nome do aluno: ")
+                        name = input("Digite o nome do aluno: ")
                         cpf = input("Digite o CPF do aluno: ")
 
-                        incluir(id, nome, cpf)
+                        incluir(id, name, cpf)
 
                         input("Aperte ENTER para continuar")
 
@@ -114,10 +114,10 @@ while True:
                             if alunos[i]['id'] == codigo: 
 
                                 new_id = int(input("Digite o novo ID do aluno: "))
-                                new_nome = input("Digite o novo nome do aluno: ")
+                                new_name = input("Digite o novo nome do aluno: ")
                                 new_cpf = input("Digite o novo CPF do aluno: ")
 
-                                editar(i, new_id, new_nome, new_cpf)
+                                editar(i, new_id, new_name, new_cpf)
                                 
                                 editado = True
 
