@@ -2,7 +2,7 @@ name: Continuous Delivery Test
 on:
   push:
     branches:
-      -main # or any other branch
+      - main # or any other branch
 
 jobs:
   deliver:
