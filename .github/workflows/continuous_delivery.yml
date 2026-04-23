@@ -50,3 +50,7 @@ jobs:
           context: .
           push: true
           tags: budziaktiago/proj-devops-2026:latest
+
+      - name: Run container with secret
+        run: |
+          docker run -e MAL_AUTHORIZATION="${{ secrets.MAL_AUTHORIZATION }}" -e MAL_CLIENT_ID="${{ secrets.MAL_CLIENT_ID }}" -p 8080:80 pyteste
