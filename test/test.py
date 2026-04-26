@@ -63,3 +63,24 @@ def test_root(mock_details, mock_list):
 
     assert response.status_code == 200
     assert isinstance(response.json(), list)
+
+@patch("requests.patch")
+def test_editStatus_success(mock_patch):
+    mock_patch.return_value.json.return_value = {
+        "status": "watching"
+    }
+
+    result = editStatus(62568, "watching")
+
+    assert result == {"status": "watching"}
+
+@patch("requests.patch")
+def test_editStatus_error(mock_patch):
+    mock_patch.return_value.json.return_value = {
+        "error": "Invalid status"
+    }
+
+    result = editStatus(1, "invalid")
+
+    assert result["message"] == "Erro!"
+    assert "details" in result

@@ -28,7 +28,7 @@ def getUserAnimeList():
 
     return response.json()['data']
 
-def getAnimeDetails(url):
+def getAnimeDetails(url: str):
     searchAnimeDetails = requests.get(
         url,
         headers={"X-MAL-CLIENT-ID": os.environ.get('MAL_CLIENT_ID')},
@@ -61,3 +61,21 @@ async def root():
         animes.append(lines)
 
     return animes
+
+@app.get("/edit_status/{anime_id}/{status}")
+async def editStatus(anime_id: int, status: str):
+
+    url = f"https://api.myanimelist.net/v2/anime/{anime_id}/my_list_status"
+
+    animeStatus = requests.patch(
+        url,
+        headers=headers,
+        params={ "status": status }
+    )
+
+    infoResponse = animeStatus.json()   
+
+    if "error" in infoResponse:
+        return {"message": "Erro!", "details": infoResponse}
+    
+    return infoResponse
