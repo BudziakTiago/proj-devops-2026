@@ -43,8 +43,9 @@ jobs:
     steps:
       - uses: actions/checkout@v5
 
-      - name: Run Discord Webhook
-        uses: discord-actions/message@v2
+      - name: Discord Commits
+        uses: Sniddl/discord-commits@v1.8
         with:
-          webhookUrl: ${{ secrets.DISCORD_WEBHOOK_URL }}
-          message: "Hello, from Github"
+          webhook: ${{ secrets.DISCORD_WEBHOOK_URL }}
+          template: "avatar-with-link"
+          include-extras: true
