@@ -63,7 +63,7 @@ async def root():
     return animes
 
 @app.get("/edit_status/{anime_id}/{status}")
-async def editStatus(anime_id: int, status: str):
+def editStatus(anime_id: int, status: str):
 
     url = f"https://api.myanimelist.net/v2/anime/{anime_id}/my_list_status"
 
