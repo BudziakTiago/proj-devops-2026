@@ -1,0 +1,17 @@
+name: Continuous Delivery Test
+on:
+  - push
+
+jobs:
+  discord:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+
+      - name: Discord Commits
+        uses: Sniddl/discord-commits@v1.8
+        with:
+          webhook: ${{ secrets.DISCORD_WEBHOOK_URL }}
+          template: "avatar-with-link"
+          include-extras: true
+          
