@@ -80,7 +80,7 @@ def test_editStatus_error(mock_patch):
         "error": "Invalid status"
     }
 
-    result = editStatus(1, "invalid")
+    result = editStatus(62568, "invalid")
 
     assert result["message"] == "Erro!"
     assert "details" in result
