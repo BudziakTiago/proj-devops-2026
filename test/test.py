@@ -31,7 +31,7 @@ def test_getAnimeDetails(mock_get):
         "alternative_titles": {"ja": "Dr.STONE SCIENCE FUTURE 第3クール", "en": "Dr. Stone: Science Future Part 3"}
     }
 
-    url = "https://api.myanimelist.net/v2/anime/1"
+    url = "https://api.myanimelist.net/v2/anime/62568"
     result = getAnimeDetails(url)
 
     assert "genres" in result
@@ -45,7 +45,7 @@ def test_root(mock_details, mock_list):
     mock_list.return_value = [
         {
             "node": {
-                "id": 1,
+                "id": 62568,
                 "my_list_status": {
                     "score": 7,
                     "status": "watching"
