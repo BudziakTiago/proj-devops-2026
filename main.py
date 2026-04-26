@@ -10,19 +10,23 @@ headers = {
     "Authorization": os.environ.get('MAL_AUTHORIZATION') 
 }
 
-params = {
-    "fields": "anime_title, my_list_status",
-    "offset": 0,
-    "limit": 5
-}
-
 @app.get("/")
 async def root():
+
+    userInformation = requests.get(
+        "https://api.myanimelist.net/v2/users/@me",
+        headers=headers,
+        params={ "fields": "anime_statistics" }
+    )
+
+    userInfo = userInformation.json()['anime_statistics']
+
+    # return userInfo['num_items']
     
     response = requests.get(
         "https://api.myanimelist.net/v2/users/@me/animelist",
         headers=headers,
-        params=params
+        params={ "fields": "anime_title, my_list_status", "offset": 0, "limit": 20 }
     )
 
     animeList = response.json()['data']
@@ -44,7 +48,7 @@ async def root():
         animeDetails = searchAnimeDetails.json()
         animeGenres = animeDetails['genres']
 
-        title = animeDetails['alternative_titles']['en']
+        title = f"Title JP (EN): {animeDetails['alternative_titles']['jp']} ({animeDetails['alternative_titles']['en']})"
 
         line1 = f"Anime: {title} / Status: {status.capitalize()} / Score: {score}"
         line2 = ", ".join(genres['name'] for genres in animeGenres)
