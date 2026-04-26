@@ -4,15 +4,11 @@ import os
 
 app = FastAPI()
 
-animes = []
-
 headers = {
     "Authorization": os.environ.get('MAL_AUTHORIZATION') 
 }
 
-@app.get("/")
-async def root():
-
+def getUserStatistics():
     userInformation = requests.get(
         "https://api.myanimelist.net/v2/users/@me",
         headers=headers,
@@ -21,34 +17,41 @@ async def root():
 
     userInfo = userInformation.json()['anime_statistics']
 
-    # return userInfo['num_items']
-    
+    return userInfo['num_items_watching']
+
+def getUserAnimeList():
     response = requests.get(
         "https://api.myanimelist.net/v2/users/@me/animelist",
         headers=headers,
-        params={ "fields": "anime_title, my_list_status", "offset": 0, "limit": 20 }
+        params={ "status": "watching", "fields": "anime_title, my_list_status", "offset": 0, "limit": getUserStatistics() }
     )
 
-    animeList = response.json()['data']
+    return response.json()['data']
+
+def getAnimeDetails(url):
+    searchAnimeDetails = requests.get(
+        url,
+        headers={"X-MAL-CLIENT-ID": os.environ.get('MAL_CLIENT_ID')},
+        params={"fields":"genres, alternative_titles"}
+    )
+
+    return searchAnimeDetails.json()
+
+@app.get("/")
+async def root():
+    animes = []
+    animeList = getUserAnimeList()
 
     for index, anime in enumerate(animeList):
-        index += 2
         animeID = anime['node']['id']
-        url = f"https://api.myanimelist.net/v2/anime/{animeID}"
-
-        searchAnimeDetails = requests.get(
-            url,
-            headers={"X-MAL-CLIENT-ID": os.environ.get('MAL_CLIENT_ID')},
-            params={"fields":"genres, alternative_titles"}
-        )
-
         score = anime['node']['my_list_status']['score']
         status = anime['node']['my_list_status']['status']
 
-        animeDetails = searchAnimeDetails.json()
+        url = f"https://api.myanimelist.net/v2/anime/{animeID}"
+        animeDetails = getAnimeDetails(url)
         animeGenres = animeDetails['genres']
 
-        title = f"Title JP (EN): {animeDetails['alternative_titles']['jp']} ({animeDetails['alternative_titles']['en']})"
+        title = f"Title JP (EN): {animeDetails['alternative_titles']['ja']} ({animeDetails['alternative_titles']['en']})"
 
         line1 = f"Anime: {title} / Status: {status.capitalize()} / Score: {score}"
         line2 = ", ".join(genres['name'] for genres in animeGenres)
